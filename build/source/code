@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Elegant Dark Themed Dashboard with Glowing UI & Real-time Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: #0f0f19;
+    color: #e0e0e0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  :root {
+    --dark-bg: #0f0f19;
+    --card-bg: #1c1c36;
+    --glow-blue: #7c3aed;
+    --glow-teal: #14b8a6;
+    --glow-pink: #db2777;
+    --glow-yellow: #eab308;
+    --glow-green: #22c55e;
+    --text-primary: #e0e0e0;
+    --text-muted: #999999;
+    --border-radius: 16px;
+    --transition-speed: 0.3s;
+  }
+
+  .container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 40px auto 60px;
+    padding: 0 24px;
+    display: grid;
+    grid-gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: 900;
+    font-size: 2.5rem;
+    margin-top: 40px;
+    background: linear-gradient(135deg, var(--glow-blue), var(--glow-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Card Styles */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow:
+      0 0 12px var(--glow-blue),
+      inset 0 0 16px var(--glow-teal);
+    transition: box-shadow var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .card:hover {
+    box-shadow:
+      0 0 20px var(--glow-yellow),
+      inset 0 0 24px var(--glow-pink);
+  }
+
+  .card h2 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    color: var(--glow-teal);
+  }
+
+  .card .value {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--glow-blue);
+    animation: glowPulse 2s infinite alternate;
+  }
+
+  @keyframes glowPulse {
+    0% {
+      text-shadow:
+        0 0 5px var(--glow-blue),
+        0 0 15px var(--glow-teal),
+        0 0 25px var(--glow-teal);
+    }
+    100% {
+      text-shadow:
+        0 0 10px var(--glow-yellow),
+        0 0 25px var(--glow-yellow),
+        0 0 40px var(--glow-yellow);
+    }
+  }
+
+  /* Real-time Chart Container */
+  .chart-container {
+    margin-top: 24px;
+    height: 180px;
+    position: relative;
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 100%;
+    gap: 16px;
+  }
+  .bar {
+    background: var(--glow-blue);
+    border-radius: 12px 12px 0 0;
+    position: relative;
+    width: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .bar:hover {
+    background: var(--glow-teal);
+  }
+  .bar::after {
+    content: attr(data-value);
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    color: var(--glow-yellow);
+    font-weight: 700;
+    text-shadow: 0 0 5px var(--glow-yellow);
+    user-select: none;
+  }
+ 
+
+  .x-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    user-select: none;
+  }
+
+  /* Footer */
+  footer {
+    padding: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-top: 1px solid #222;
+  }
+
+  /* Material icon style */
+  .material-icons {
+    vertical-align: middle;
+    color: var(--glow-teal);
+  }
+
+</style>
+</head>
+<body>
+  <h1>Elegant Dark Dashboard</h1>
+  <div class="container" role="main" aria-label="Dashboard with real-time data visualization">
+
+    <section class="card" aria-live="polite" aria-label="Total users">
+      <h2><span class="material-icons" aria-hidden="true">groups</span> Total Users</h2>
+      <div id="totalUsers" class="value" aria-atomic="true">0</div>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Active sessions">
+      <h2><span class="material-icons" aria-hidden="true">devices</span> Active Sessions</h2>
+      <div id="activeSessions" class="value" aria-atomic="true">0</div>
+    </section>
+
+    <section class="card" aria-live="polite" aria-label="Server load percentage">
+      <h2><span class="material-icons" aria-hidden="true">speed</span> Server Load %</h2>
+      <div id="serverLoad" class="value" aria-atomic="true">0%</div>
+    </section>
+
+    <section class="card" aria-label="User activity over past week">
+      <h2><span class="material-icons" aria-hidden="true">show_chart</span> User Activity (Last 7 days)</h2>
+      <div class="chart-container" aria-hidden="true">
+        <div class="bar-chart" id="barChart">
+          <!-- Bars dynamically generated -->
+        </div>
+        <div class="x-labels" id="xLabels">
+          <!-- Labels dynamically generated -->
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <a href=""><h4 style="color: #fff;">Source Code</h4></a>
+
+  <footer>
+    &copy; 2024 Elegant Dark Dashboard. All rights reserved.
+  </footer>
+
+<script>
+  'use strict';
+
+  // Utility to animate increment of a number to target value
+  function animateValue(id, start, end, duration = 1200, suffix = '') {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const value = Math.floor(progress * (end - start) + start);
+      obj.textContent = value + suffix;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // Simulate real-time data - random updates every few seconds
+  let totalUsers = 8960;
+  let activeSessions = 560;
+  let serverLoad = 45;
+  let userActivity = [75, 80, 72, 90, 110, 85, 95]; // last 7 days activity
+
+  function updateDashboard() {
+    // Randomly vary data slightly
+    totalUsers += Math.floor(Math.random() * 15 - 7);
+    if (totalUsers < 1000) totalUsers = 1000;
+    if (totalUsers > 10000) totalUsers = 10000;
+
+    activeSessions += Math.floor(Math.random() * 10 - 5);
+    if (activeSessions < 200) activeSessions = 200;
+    if (activeSessions > 1000) activeSessions = 1000;
+
+    serverLoad += Math.floor(Math.random() * 5 - 2);
+    if (serverLoad < 10) serverLoad = 10;
+    if (serverLoad > 100) serverLoad = 100;
+
+    for (let i = 0; i < userActivity.length; i++) {
+      userActivity[i] += Math.floor(Math.random() * 15 - 7);
+      if (userActivity[i] < 40) userActivity[i] = 40;
+      if (userActivity[i] > 120) userActivity[i] = 120;
+    }
+
+    animateValue('totalUsers', parseInt(document.getElementById('totalUsers').textContent, 10), totalUsers, 1500);
+    animateValue('activeSessions', parseInt(document.getElementById('activeSessions').textContent, 10), activeSessions, 1500);
+    animateValue('serverLoad', parseInt(document.getElementById('serverLoad').textContent, 10), serverLoad, 1500, '%');
+    renderBarChart();
+  }
+
+  // Render bar chart bars and labels
+  function renderBarChart() {
+    const container = document.getElementById('barChart');
+    container.innerHTML = ''; // clear
+    const labelsContainer = document.getElementById('xLabels');
+    labelsContainer.innerHTML = '';
+
+    const maxVal = Math.max(...userActivity);
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    userActivity.forEach((val, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'bar';
+      const heightPercent = (val / maxVal) * 100;
+      bar.style.height = `${heightPercent}%`;
+      bar.setAttribute('data-value', val);
+      bar.setAttribute('role', 'img');
+      bar.setAttribute('aria-label', `${days[i]}: ${val} users`);
+      container.appendChild(bar);
+
+      const label = document.createElement('div');
+      label.textContent = days[i];
+      labelsContainer.appendChild(label);
+    });
+  }
+
+  // Initialize dashboard with starting values and update interval
+  function init() {
+    document.getElementById('totalUsers').textContent = totalUsers;
+    document.getElementById('activeSessions').textContent = activeSessions;
+    document.getElementById('serverLoad').textContent = serverLoad + '%';
+    renderBarChart();
+
+    // Update every 5 seconds
+    setInterval(updateDashboard, 5000);
+  }
+
+  window.onload = init;
+</script>
+</body>
+</html>
+
+
